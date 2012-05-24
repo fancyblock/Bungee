@@ -68,15 +68,15 @@ package physic
 		/**
 		 * @desc	getter & setter of the MASS
 		 */
-		public function set MASS( value:Number ):void {	m_mass = value;s	}
-		public function get MASS() { return m_mass; }
+		public function set MASS( value:Number ):void {	m_mass = value;	}
+		public function get MASS():Number { return m_mass; }
 		
 		
 		/**
 		 * @desc	getter & setter of the INTERVAL
 		 */
 		public function set INTERVAL( value:Number ):void {	m_interval = value;	}
-		public function get INTERVAL() { return m_interval; }
+		public function get INTERVAL():Number { return m_interval; }
 		
 		
 		/**

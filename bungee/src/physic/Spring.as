@@ -11,12 +11,12 @@ package physic
 		
 		//------------------------------ private member ------------------------------------
 		
-		var m_particle1:Particle = null;
-		var m_partielc2:Particle = null;
+		protected var m_particle1:Particle = null;
+		protected var m_particle2:Particle = null;
 		
-		var m_length:Number = 1;
-		var m_k:Number = 5;
-		var m_dampK:Number = 1;
+		protected var m_length:Number = 1;
+		protected var m_k:Number = 5;
+		protected var m_dampK:Number = 1;
 		
 		//------------------------------ public function -----------------------------------
 		
@@ -35,10 +35,10 @@ package physic
 		 */
 		public function Update():void
 		{
-			if ( m_particle1 != null && m_partielc2 != null )
+			if ( m_particle1 != null && m_particle2 != null )
 			{
-				var springVecX:Number = m_particle1.POSITION.x - m_partielc2.POSITION.x;
-				var springVecY:Number = m_particle1.POSITION.y - m_partielc2.POSITION.y;
+				var springVecX:Number = m_particle1.POSITION.x - m_particle2.POSITION.x;
+				var springVecY:Number = m_particle1.POSITION.y - m_particle2.POSITION.y;
 				var normalSpringVec:Point = new Point( springVecX, springVecY );
 				normalSpringVec.normalize( m_length );
 				
@@ -46,7 +46,7 @@ package physic
 				var forceY:Number = - m_k * ( springVecY - normalSpringVec.y );
 				
 				m_particle1.AddForce( forceX, forceY );
-				m_partielc2.AddForce( -forceX, -forceY );
+				m_particle2.AddForce( -forceX, -forceY );
 				
 				calculateDamp();
 			}
@@ -75,7 +75,7 @@ package physic
 		 * @desc	setter of the particle
 		 */
 		public function set PARTICLE1( value:Particle ):void { m_particle1 = value;	}
-		public function set PARTICLE2( value:Particle ):void { m_partielc2 = value;	}
+		public function set PARTICLE2( value:Particle ):void { m_particle2 = value;	}
 		
 		
 		/**
@@ -92,8 +92,8 @@ package physic
 		// calculate damp
 		protected function calculateDamp():void
 		{
-			var speedSubX:Number = m_partielc2.VELOCITY.x - m_particle1.VELOCITY.x;
-			var speedSubY:Number = m_partielc2.VELOCITY.y - m_particle1.VELOCITY.y;
+			var speedSubX:Number = m_particle2.VELOCITY.x - m_particle1.VELOCITY.x;
+			var speedSubY:Number = m_particle2.VELOCITY.y - m_particle1.VELOCITY.y;
 			
 			var forceX:Number = m_dampK * speedSubX;
 			var forceY:Number = m_dampK * speedSubY;
