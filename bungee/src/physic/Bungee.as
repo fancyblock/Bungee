@@ -37,11 +37,13 @@ package physic
 		 * @para	spring length
 		 * @return	none
 		 * */
-		public function Create( particleCnt:int, springLen:Number ):void
+		public function Create( particleCnt:int, springLen:Number, mass:Number = 1, k:Number = 5, dampK:Number = 1, interval:Number = 0.1 ):void
 		{
 			for( var i:int = 0; i < particleCnt; i++ )
 			{
 				var particle:Particle = new Particle();
+				particle.MASS = mass;
+				particle.INTERVAL = interval;
 				m_particles.push( particle );
 				
 				// install the spring
@@ -51,6 +53,8 @@ package physic
 					m_springs.push( spring );
 					
 					spring.LENGTH = springLen;
+					spring.K = k;
+					spring.DAMP_K = k;
 					spring.PARTICLE1 = m_particles[i-1];
 					spring.PARTICLE2 = m_particles[i];
 				}
