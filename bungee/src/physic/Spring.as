@@ -15,17 +15,28 @@ package physic
 		protected var m_particle2:Particle = null;
 		
 		protected var m_length:Number = 1;
-		protected var m_k:Number = 5;
-		protected var m_dampK:Number = 1;
 		
 		//------------------------------ public function -----------------------------------
 		
 		/**
 		 * @desc	constructor of Spring
 		 */
-		public function Spring() 
+		public function Spring( particle1:Particle, particle2:Particle, length:Number = -1 )
 		{
-			//TODO 
+			m_particle1 = particle1;
+			m_particle2 = particle2;
+			
+			if ( length < 0 )
+			{
+				var pt:Point = new Point( m_particle1.POSITION.x - m_particle2.POSITION.x, 
+											m_particle2.POSITION.y - m_particle2.POSITION.y );
+
+				m_length = pt.length;
+			}
+			else
+			{
+				m_length = length;
+			}
 		}
 		
 		
@@ -37,45 +48,33 @@ package physic
 		{
 			if ( m_particle1 != null && m_particle2 != null )
 			{
-				var springVecX:Number = m_particle1.POSITION.x - m_particle2.POSITION.x;
-				var springVecY:Number = m_particle1.POSITION.y - m_particle2.POSITION.y;
-				var normalSpringVec:Point = new Point( springVecX, springVecY );
-				normalSpringVec.normalize( m_length );
+				var dx:Number = m_particle2.POSITION.x - m_particle1.POSITION.x;
+				var dy:Number = m_particle2.POSITION.y - m_particle1.POSITION.y;
+				var dist:Number = Math.sqrt(dx * dx + dy * dy);
+				var diff:Number = m_length - dist;
 				
-				var forceX:Number = - m_k * ( springVecX - normalSpringVec.x );
-				var forceY:Number = - m_k * ( springVecY - normalSpringVec.y );
+				var offsetX:Number = (diff * dx / dist) * 0.5;
+				var offsetY:Number = (diff * dy / dist) * 0.5;
 				
-				m_particle1.AddForce( forceX, forceY );
-				m_particle2.AddForce( -forceX, -forceY );
+				if ( m_particle1.IsFix() == false )
+				{
+					m_particle1.POSITION.x -= offsetX;
+					m_particle1.POSITION.y -= offsetY;
+				}
 				
-				calculateDamp();
+				if ( m_particle2.IsFix() == false )
+				{
+					m_particle2.POSITION.x += offsetX;
+					m_particle2.POSITION.y += offsetY;
+				}
 			}
 		}
-		
-		
-		/**
-		 * @desc	setter of the dampK
-		 */
-		public function set DAMP_K( value:Number ):void	{ m_dampK = value; }
-		
-		
-		/**
-		 * @desc	setter of the k
-		 */
-		public function set K( value:Number ):void { m_k = value }
 		
 		
 		/**
 		 * @desc	setter of the length
 		 */
 		public function set LENGTH( value:Number ):void	{ m_length = value }
-		
-		
-		/**
-		 * @desc	setter of the particle
-		 */
-		public function set PARTICLE1( value:Particle ):void { m_particle1 = value;	}
-		public function set PARTICLE2( value:Particle ):void { m_particle2 = value;	}
 		
 		
 		/**
@@ -88,19 +87,6 @@ package physic
 		}
 		
 		//------------------------------ private function ----------------------------------
-		
-		// calculate damp
-		protected function calculateDamp():void
-		{
-			var speedSubX:Number = m_particle2.VELOCITY.x - m_particle1.VELOCITY.x;
-			var speedSubY:Number = m_particle2.VELOCITY.y - m_particle1.VELOCITY.y;
-			
-			var forceX:Number = m_dampK * speedSubX;
-			var forceY:Number = m_dampK * speedSubY;
-			
-			m_particle1.AddForce( forceX, forceY );
-			m_particle2.AddForce( -forceX, -forceY );
-		}
 		
 		//------------------------------- event callback -----------------------------------
 		

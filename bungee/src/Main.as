@@ -46,10 +46,9 @@ package
 			
 			// create bungee
 			m_bungee = new Bungee();
-			m_bungee.Create( 50, 0.2, 0.8, 1.3, 1, 0.2 );
-			m_bungee.SetEndpointPos( 0, 0, 200 );
-			m_bungee.SetEndpointPos( 49, 320, 200 );
-			m_bungee.SetExternForce( 0, 0.2 );
+			m_bungee.Create( new Point( 0, 200 ), new Point( 320, 200 ), 10 );
+			m_bungee.SetEndpointFix( 0, true );
+			m_bungee.SetEndpointFix( 9, true );
 			
 			m_touchOffset = new Point();
 			

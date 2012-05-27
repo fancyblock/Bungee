@@ -15,8 +15,6 @@ package physic
 		protected var m_particles:Vector.<Particle> = null;
 		protected var m_springs:Vector.<Spring> = null;
 		
-		protected var m_externalForce:Point = null;
-		
 		//------------------------------ public function -----------------------------------
 		
 		/**
@@ -26,8 +24,6 @@ package physic
 		{
 			m_particles = new Vector.<Particle>();
 			m_springs = new Vector.<Spring>();
-			
-			m_externalForce = new Point();
 		}
 		
 		
@@ -37,39 +33,33 @@ package physic
 		 * @para	spring length
 		 * @return	none
 		 * */
-		public function Create( particleCnt:int, springLen:Number, mass:Number = 1, k:Number = 5, dampK:Number = 1, interval:Number = 0.1 ):void
+		public function Create( startPos:Point, endPos:Point, number:int ):void
 		{
-			for( var i:int = 0; i < particleCnt; i++ )
+			var dx:Number = ( endPos.x - startPos.x ) / Number(number-1);
+			var dy:Number = ( endPos.y - startPos.y ) / Number(number-1);
+			
+			for( var i:int = 0; i < number; i++ )
 			{
 				var particle:Particle = new Particle();
-				particle.MASS = mass;
-				particle.INTERVAL = interval;
+				particle.SetPosition( startPos.x + dx * i , startPos.y + dy * i );
 				m_particles.push( particle );
 				
 				// install the spring
 				if( i > 0 )
 				{
-					var spring:Spring = new Spring();
+					var spring:Spring = new Spring( m_particles[i-1], m_particles[i] );
 					m_springs.push( spring );
-					
-					spring.LENGTH = springLen;
-					spring.K = k;
-					spring.DAMP_K = k;
-					spring.PARTICLE1 = m_particles[i-1];
-					spring.PARTICLE2 = m_particles[i];
 				}
 			}
 		}
 		
 		
 		/**
-		 * @desc	set endpoint position
-		 * @para	index
-		 * @para	x
-		 * @para	y
-		 * @return	none
-		 **/
-		public function SetEndpointPos( index:int, x:Number, y:Number ):void
+		 * @desc	set endpoint fix or not
+		 * @param	index
+		 * @param	isFix
+		 */
+		public function SetEndpointFix( index:int, isFix:Boolean ):void
 		{
 			if( index < 0 || index >= m_particles.length )
 			{
@@ -78,8 +68,7 @@ package physic
 			
 			var particle:Particle = m_particles[index];
 			
-			particle.SetFix( true );
-			particle.SetPosition( x, y );
+			particle.SetFix( isFix );
 		}
 		
 		
@@ -89,19 +78,6 @@ package physic
 		public function get PARTICLE_LIST():Vector.<Particle>
 		{
 			return m_particles;
-		}
-		
-		
-		/**
-		 * @desc	set the external force
-		 * @para	x
-		 * @para	y
-		 * @return	none
-		 **/
-		public function SetExternForce( x:Number, y:Number ):void
-		{
-			m_externalForce.x = x;
-			m_externalForce.y = y;
 		}
 		
 		
@@ -118,8 +94,7 @@ package physic
 			}
 			
 			for( i = 0; i < m_particles.length; i++ )
-			{
-				m_particles[i].AddForce( m_externalForce.x, m_externalForce.y );
+			{	
 				m_particles[i].Update();
 			}
 			

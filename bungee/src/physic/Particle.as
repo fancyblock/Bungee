@@ -12,13 +12,10 @@ package physic
 		
 		//------------------------------ private member ------------------------------------
 		
-		protected var m_mass:Number = 1;					// mass muse be not zero
-		protected var m_interval:Number = 0.1;
 		protected var m_isFixed:Boolean = false;
 		
 		protected var m_position:Point = null;
-		protected var m_velocity:Point = null;
-		protected var m_force:Point = null;
+		protected var m_oldPosition:Point = null;
 		
 		//------------------------------ public function -----------------------------------
 		
@@ -28,8 +25,7 @@ package physic
 		public function Particle() 
 		{
 			m_position = new Point();
-			m_velocity = new Point();
-			m_force = new Point();
+			m_oldPosition = new Point();
 		}
 		
 		
@@ -40,43 +36,18 @@ package physic
 		{
 			if ( m_isFixed )
 			{
-				m_force.x = 0;
-				m_force.y = 0;
-				
 				return;
 			}
 			
-			// calculate the acceleration according to the Newton's second law ( F = ma )
-			var acceX:Number = m_force.x / m_mass;
-			var acceY:Number = m_force.y / m_mass;
+			var tempX:Number = m_position.x;
+			var tempY:Number = m_position.y;
 			
-			// calculate the velocity
-			m_velocity.x += m_interval * acceX;
-			m_velocity.y += m_interval * acceY;
+			m_position.x += this.VELOCITY_X;
+			m_position.y += this.VELOCITY_Y;
 			
-			// calculate the position
-			m_position.x += m_velocity.x * m_interval;
-			m_position.y += m_velocity.y * m_interval;
-			
-			// clean the force
-			m_force.x = 0;
-			m_force.y = 0;
-			
+			m_oldPosition.x = tempX;
+			m_oldPosition.y = tempY;
 		}
-		
-		
-		/**
-		 * @desc	getter & setter of the MASS
-		 */
-		public function set MASS( value:Number ):void {	m_mass = value;	}
-		public function get MASS():Number { return m_mass; }
-		
-		
-		/**
-		 * @desc	getter & setter of the INTERVAL
-		 */
-		public function set INTERVAL( value:Number ):void {	m_interval = value;	}
-		public function get INTERVAL():Number { return m_interval; }
 		
 		
 		/**
@@ -90,21 +61,22 @@ package physic
 		
 		
 		/**
-		 * @desc	return the velocity of this particle
+		 * @desc	return if this particle is fixed or not
+		 * @return
 		 */
-		public function get VELOCITY():Point {	return m_velocity; }
+		public function IsFix():Boolean
+		{
+			return m_isFixed;
+		}
 		
 		
 		/**
-		 * @desc	add force to this particle
-		 * @param	x
-		 * @param	y
+		 * @desc	getter & setter of the velocity
 		 */
-		public function AddForce( x:Number, y:Number ):void
-		{
-			m_force.x += x;
-			m_force.y += y;
-		}
+		public function get VELOCITY_X():Number { return m_position.x - m_oldPosition.x; }
+		public function get VELOCITY_Y():Number { return m_position.y - m_oldPosition.y; }
+		public function set VELOCITY_X( value:Number ):void { m_oldPosition.x = m_position.x - value; }
+		public function set VELOCITY_Y( value:Number ):void { m_oldPosition.y = m_position.y - value; }
 		
 		
 		/**
@@ -114,8 +86,8 @@ package physic
 		 */
 		public function SetPosition( x:Number, y:Number ):void
 		{
-			m_position.x = x;
-			m_position.y = y;
+			m_oldPosition.x = m_position.x = x;
+			m_oldPosition.y = m_position.y = y;
 		}
 		
 		
